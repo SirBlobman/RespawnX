@@ -1,0 +1,3 @@
+delay in ticks: 1
+require permission: true
+permission: 'respawnx.respawn'

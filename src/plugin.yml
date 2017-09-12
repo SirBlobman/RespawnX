@@ -1,0 +1,10 @@
+name: RespawnX
+main: com.SirBlobman.respawnx.RespawnX
+version: 0.0.1
+description: Automatically respawn players
+commands:
+  respawnx:
+    description: Reload the configuration for RespawnX
+    permission: respawnx.reload
+    usage: /<command>
+    aliases: [rx, respawn, autorespawn]
