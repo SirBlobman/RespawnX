@@ -62,6 +62,7 @@ public class RespawnX extends JavaPlugin implements Listener {
                 public void run() {
                     p.setCanPickupItems(false);
                     HANDLER.handleDeath(p);
+                    LAST_DEATH.put(p, p.getLocation());
                 }
             };
             br.runTaskLater(this, ConfigSettings.DELAY_IN_TICKS);
