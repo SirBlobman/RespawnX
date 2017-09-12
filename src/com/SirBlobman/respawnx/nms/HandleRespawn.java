@@ -1,15 +1,32 @@
 package com.SirBlobman.respawnx.nms;
 
+import com.SirBlobman.respawnx.config.ConfigSettings;
+
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class HandleRespawn {
     public abstract void handleDeath(Player p);
-    public void handleRespawn(Player p) {
+    
+    public void handleRespawn(Player p, Location death) {
         p.setCanPickupItems(true);
+        if(ConfigSettings.RESPAWN_NEAR_DEATH) {
+            int radius = ConfigSettings.RESPAWN_RADIUS;
+            if(radius < 0) radius = 0;
+            ThreadLocalRandom random = ThreadLocalRandom.current();
+            int randomVar = random.nextInt(0, radius);
+            randomVar = random.nextBoolean() ? (-1 * randomVar) : randomVar;
+            int x = death.getBlockX() + randomVar;
+            int y = death.getBlockY() + randomVar;
+            int z = death.getBlockZ() + randomVar;
+            Location l = new Location(death.getWorld(), x, y, z);
+            p.teleport(l);
+        }
     }
     
     public static String minecraftVersion() {

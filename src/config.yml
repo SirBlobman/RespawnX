@@ -1,3 +1,6 @@
 delay in ticks: 1
 require permission: true
 permission: 'respawnx.respawn'
+respawn near death: 
+  enabled: true
+  radius: 1

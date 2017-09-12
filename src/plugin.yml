@@ -1,6 +1,6 @@
 name: RespawnX
 main: com.SirBlobman.respawnx.RespawnX
-version: 0.0.1
+version: 0.0.2
 description: Automatically respawn players
 commands:
   respawnx:

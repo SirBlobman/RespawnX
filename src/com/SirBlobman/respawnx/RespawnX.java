@@ -4,6 +4,7 @@ import com.SirBlobman.respawnx.config.ConfigSettings;
 import com.SirBlobman.respawnx.nms.HandleRespawn;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,6 +18,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RespawnX extends JavaPlugin implements Listener {
     public static RespawnX INSTANCE;
@@ -49,6 +52,7 @@ public class RespawnX extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {}
     
+    private static Map<Player, Location> LAST_DEATH = new HashMap<>();
     @EventHandler(priority=EventPriority.HIGHEST)
     public void onDeath(PlayerDeathEvent e) {
         Player p = e.getEntity();
@@ -67,7 +71,8 @@ public class RespawnX extends JavaPlugin implements Listener {
     @EventHandler(priority=EventPriority.HIGHEST)
     public void onRespawn(PlayerRespawnEvent e) {
         Player p = e.getPlayer();
-        HANDLER.handleRespawn(p);
+        Location l = LAST_DEATH.containsKey(p) ? LAST_DEATH.get(p) : e.getRespawnLocation();
+        HANDLER.handleRespawn(p, l);
     }
     
     @EventHandler(priority=EventPriority.HIGHEST)
