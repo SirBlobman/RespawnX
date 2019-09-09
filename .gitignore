@@ -1,12 +1,7 @@
-# Java Files
-*.classpath
-*.project
-*.class
+# IntelliJ IDEA
+.idea/
+*.iml
 
-# Java Folders
-/.settings/
-/bin/
-
-# Builder Files
-*.launch
-*.xml
+# Maven
+target/
+dependency-reduced-pom.xml
