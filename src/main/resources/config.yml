@@ -18,12 +18,30 @@ require permission: false
 # Default: "respawnx.respawn.automatic"
 permission: "respawnx.respawn.automatic"
 
+# This is a list of worlds that RespawnX will fail to work in
+# Worlds are case sensitive, therefore "world" is not the same as "wOrLd"
+#
+# Default:
+# - "minigame1"
+# - "minigame2"
+disabled worlds:
+- "minigame1"
+- "MiNiGaMe2"
+
+# Which commands should be executed when a player respawns?
+# Set it to [] to disable
+#
+# Default:
+# - "give {player} rotten_flesh 1 0"
+respawn commands:
+- "give {player} rotten_flesh 1 0"
+
 respawn near death:
   # Should players respawn near the location they died?
   #
   # Default: false
   enabled: false
-  
+
   # How close to their death location should they respawn?
   # The distance is a circular radius of blocks
   #

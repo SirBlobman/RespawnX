@@ -7,8 +7,10 @@ main: "${bukkit.plugin.main}"
 version: "${bukkit.plugin.version}"
 
 commands:
-  freeze:
-    description: "Freeze or unfreeze a player."
-    usage: "/<command> <player>"
-    permission: "freeze.command.freeze"
-    aliases: [glue, paralyze]
+  respawnx:
+    description: "Reload the config for RespawnX"
+    usage: "/<command> reload"
+    permission: "respawnx.command.respawnx.reload"
+    aliases:
+    - "respawn"
+    - "autorespawn"
