@@ -3,9 +3,12 @@
 
 [SIZE=5][COLOR=#FF0000][B]Features:[/B][/COLOR][/SIZE]
 [LIST]
-[*] Automatically respawn players
-[*] Respawn players at the location that they died (or a radius near their death location)
-[*] Execute commands whenever a player respawns
+[*] Automatically respawn players.
+[*] Delay automatic respawns by a configurable amount.
+[*] Disable worlds that you don't want auto-respawns in.
+[*] Respawn players at the location that they died (or a radius near their death location).
+[*] Execute commands whenever a player respawns.
+[*] Fixes glitched players when they join (e.g. NaN or Infinite health).
 [/LIST]
 
 [SIZE=5][COLOR=#FF0000][B]Dependencies:[/B][/COLOR][/SIZE]
