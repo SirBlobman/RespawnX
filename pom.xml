@@ -1,85 +1,69 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<packaging>jar</packaging>
-	
-	<groupId>com.SirBlobman</groupId>
-	<artifactId>respawnx</artifactId>
-	<version>1.0.0</version>
-	<name>RespawnX</name>
-	<description>A plugin that automatically respawns players.</description>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>8</maven.compiler.source>
-		<maven.compiler.target>8</maven.compiler.target>
+    <groupId>com.SirBlobman.plugin</groupId>
+    <artifactId>RespawnX</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
 
-		<bukkit.version>1.8-R0.1-SNAPSHOT</bukkit.version>
+    <name>RespawnX</name>
+    <description>An easy-to-use plugin that automatically respawns players.</description>
 
-		<bukkit.plugin.name>RespawnX</bukkit.plugin.name>
-		<bukkit.plugin.prefix>RespawnX</bukkit.plugin.prefix>
-		<bukkit.plugin.description>${project.description}</bukkit.plugin.description>
-		<bukkit.plugin.main>com.SirBlobman.respawnx.RespawnX</bukkit.plugin.main>
-		<bukkit.plugin.version>${project.version}</bukkit.plugin.version>
-	</properties>
+    <properties>
+        <java.version>1.8</java.version>
+        <spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>
+        
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-	<repositories>
-		<repository>
-			<id>hub-spigotmc-org</id>
-			<name>Spigot and Bukkit</name>
-			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
-		</repository>
-	</repositories>
+        <bukkit.plugin.name>${project.artifactId}</bukkit.plugin.name>
+        <bukkit.plugin.prefix>${project.name}</bukkit.plugin.prefix>
+        <bukkit.plugin.description>${project.description}</bukkit.plugin.description>
 
-	<dependencies>
-		<!-- SirBlobman API -->
-		<dependency>
-			<groupId>com.SirBlobman.api</groupId>
-			<artifactId>SirBlobmanAPI</artifactId>
-			<version>1.9</version>
-			<scope>compile</scope>
-		</dependency>
+        <bukkit.plugin.main>com.SirBlobman.respawnx.RespawnPlugin</bukkit.plugin.main>
+        <bukkit.plugin.version>2.0.0</bukkit.plugin.version>
+    </properties>
 
-		<!-- Spigot API -->
-		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot-api</artifactId>
-			<version>${bukkit.version}</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
+    <repositories>
+        <!-- SpigotMC Repository -->
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
 
-	<build>
-		<finalName>RespawnX-${project.version}</finalName>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.1</version>
-				<configuration>
-					<relocations>
-						<relocation>
-							<pattern>com.SirBlobman.api</pattern>
-							<shadedPattern>com.SirBlobman.respawnx.api</shadedPattern>
-						</relocation>
-					</relocations>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+        <!-- CodeMC Public Repository -->
+        <repository>
+            <id>codemc-public</id>
+            <url>https://repo.codemc.io/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- Spigot API -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${spigot.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- SirBlobmanCore -->
+        <dependency>
+            <groupId>com.SirBlobman.api</groupId>
+            <artifactId>core</artifactId>
+            <version>2.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${bukkit.plugin.name}-${bukkit.plugin.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>

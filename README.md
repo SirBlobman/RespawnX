@@ -1,2 +1,2 @@
 # RespawnX
-A spigot plugin to automatically respawn your players
+An easy-to-use plugin that automatically respawns players.

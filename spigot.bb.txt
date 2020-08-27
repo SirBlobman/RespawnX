@@ -1,0 +1,21 @@
+[SIZE=5][B]Supported Spigot Versions:[/B][/SIZE]
+1.7.10, 1.8.8, 1.9.4, 1.10.2, 1.11.2, 1.12.2, 1.13.2, 1.14.4, 1.15.2, 1.16.2
+
+[SIZE=5][COLOR=#FF0000][B]Features:[/B][/COLOR][/SIZE]
+[LIST]
+[*] Automatically respawn players
+[*] Respawn players at the location that they died (or a radius near their death location)
+[*] Execute commands whenever a player respawns
+[/LIST]
+
+[SIZE=5][COLOR=#FF0000][B]Dependencies:[/B][/COLOR][/SIZE]
+[LIST]
+[*] [URL="https://www.spigotmc.org/resources/83189/"]SirBlobmanCore[/URL]
+[/LIST]
+
+[SIZE=5][B][COLOR=#FF0000]Help and Support:[/COLOR][/B][/SIZE]
+Click the image to join my discord for support. You can also join if you have feature requests or if you just want to chat with other users.
+[URL="https://discord.gg/XMg2agT"][IMG]https://discordapp.com/assets/fc0b01fe10a0b8c602fb0106d8189d9b.png[/IMG][/URL]
+
+[SIZE=5][B][COLOR=#FF0000]Extra Information:[/COLOR][/B][/SIZE]
+Please do not use a review to leave bug reports or errors. I am not able to help you through a review.

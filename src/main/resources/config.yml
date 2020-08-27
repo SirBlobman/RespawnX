@@ -1,5 +1,4 @@
-# This is the default configuration for RespawnX
-# RespawnX is made by SirBlobman
+# This is the default configuration for RespawnX by SirBlobman
 # Made for version ${bukkit.plugin.version}
 
 # How long should RespawnX wait before automatically respawning players?
@@ -11,7 +10,7 @@ delay: 1
 # Should a permission be required to automatically respawn a player?
 #
 # Default: false (no)
-require permission: false
+require-permission: false
 
 # If 'require permission' is set to true, what permission is required?
 #
@@ -24,19 +23,19 @@ permission: "respawnx.respawn.automatic"
 # Default:
 # - "minigame1"
 # - "minigame2"
-disabled worlds:
-- "minigame1"
-- "MiNiGaMe2"
+disabled-world-list:
+  - "minigame1"
+  - "MiNiGaMe2"
 
 # Which commands should be executed when a player respawns?
 # Set it to [] to disable
 #
 # Default:
 # - "give {player} rotten_flesh 1 0"
-respawn commands:
-- "give {player} rotten_flesh 1 0"
+respawn-commands:
+  - "give {player} rotten_flesh 1 0"
 
-respawn near death:
+respawn-near-death:
   # Should players respawn near the location they died?
   #
   # Default: false

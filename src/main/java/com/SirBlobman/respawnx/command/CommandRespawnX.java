@@ -1,31 +1,34 @@
 package com.SirBlobman.respawnx.command;
 
-import com.SirBlobman.api.utility.Util;
-import com.SirBlobman.respawnx.RespawnX;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import java.util.Collections;
+import java.util.List;
+
 import org.bukkit.command.CommandSender;
 
-public class CommandRespawnX implements CommandExecutor {
-    private final RespawnX plugin;
-    public CommandRespawnX(RespawnX plugin) {
+import com.SirBlobman.api.command.Command;
+import com.SirBlobman.api.utility.MessageUtility;
+import com.SirBlobman.respawnx.RespawnPlugin;
+
+public class CommandRespawnX extends Command {
+    private final RespawnPlugin plugin;
+    public CommandRespawnX(RespawnPlugin plugin) {
+        super(plugin, "respawnx");
         this.plugin = plugin;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(args.length < 1) return false;
-
-        String sub = args[0].toLowerCase();
-        if(sub.equals("reload")) return reloadCommand(sender);
-
-        return false;
+    public List<String> onTabComplete(CommandSender sender, String[] args) {
+        return (args.length == 1 ? Collections.singletonList("reload") : Collections.emptyList());
     }
 
-    private boolean reloadCommand(CommandSender sender) {
-        this.plugin.reloadConfig();
+    @Override
+    public boolean execute(CommandSender sender, String[] args) {
+        if(args.length < 1) return false;
+        String sub = args[0].toLowerCase();
+        if(!sub.equals("reload")) return false;
 
-        String message = Util.color("&c[&4RespawnX&c] &fSuccessfully reloaded 'config.yml'.");
+        this.plugin.reloadConfig();
+        String message = MessageUtility.color("&2[RespawnX]&a Successfully reloaded the configuration file.");
         sender.sendMessage(message);
         return true;
     }
