@@ -1,6 +1,9 @@
 # This is the default configuration for RespawnX by SirBlobman
 # Made for version ${bukkit.plugin.version}
 
+# Should the plugin be allowed to check for updates?
+update-checker: true
+
 # How long should RespawnX wait before automatically respawning players?
 # The delay is in ticks
 #
