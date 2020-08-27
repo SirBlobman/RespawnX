@@ -57,6 +57,20 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <!-- CodeMC Releases -->
+        <repository>
+            <id>codemc-releases</id>
+            <url>https://repo.codemc.io/repository/maven-releases/</url>
+        </repository>
+
+        <!-- CodeMC Snapshots -->
+        <snapshotRepository>
+            <id>codemc-snapshots</id>
+            <url>https://repo.codemc.io/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <finalName>${bukkit.plugin.name}-${bukkit.plugin.version}</finalName>
         <resources>
