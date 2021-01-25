@@ -1,14 +1,14 @@
-package com.SirBlobman.respawnx;
+package com.github.sirblobman.respawn;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.SirBlobman.api.nms.MultiVersionHandler;
-import com.SirBlobman.api.update.UpdateChecker;
-import com.SirBlobman.core.CorePlugin;
-import com.SirBlobman.respawnx.command.CommandRespawnX;
-import com.SirBlobman.respawnx.listener.ListenerRespawnX;
+import com.github.sirblobman.api.core.CorePlugin;
+import com.github.sirblobman.api.nms.MultiVersionHandler;
+import com.github.sirblobman.api.update.UpdateChecker;
+import com.github.sirblobman.respawn.command.CommandRespawnX;
+import com.github.sirblobman.respawn.listener.ListenerRespawnX;
 
 public class RespawnPlugin extends JavaPlugin {
     @Override

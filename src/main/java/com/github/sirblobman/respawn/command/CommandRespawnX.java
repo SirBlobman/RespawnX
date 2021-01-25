@@ -1,13 +1,13 @@
-package com.SirBlobman.respawnx.command;
+package com.github.sirblobman.respawn.command;
 
 import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import com.SirBlobman.api.command.Command;
-import com.SirBlobman.api.utility.MessageUtility;
-import com.SirBlobman.respawnx.RespawnPlugin;
+import com.github.sirblobman.api.command.Command;
+import com.github.sirblobman.api.utility.MessageUtility;
+import com.github.sirblobman.respawn.RespawnPlugin;
 
 public class CommandRespawnX extends Command {
     private final RespawnPlugin plugin;

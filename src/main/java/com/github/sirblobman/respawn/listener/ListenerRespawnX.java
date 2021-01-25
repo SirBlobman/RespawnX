@@ -1,4 +1,4 @@
-package com.SirBlobman.respawnx.listener;
+package com.github.sirblobman.respawn.listener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,10 +24,10 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import com.SirBlobman.api.nms.MultiVersionHandler;
-import com.SirBlobman.api.nms.PlayerHandler;
-import com.SirBlobman.api.utility.Validate;
-import com.SirBlobman.respawnx.RespawnPlugin;
+import com.github.sirblobman.api.nms.MultiVersionHandler;
+import com.github.sirblobman.api.nms.PlayerHandler;
+import com.github.sirblobman.api.utility.Validate;
+import com.github.sirblobman.respawn.RespawnPlugin;
 
 public class ListenerRespawnX implements Listener {
     private final RespawnPlugin plugin;
