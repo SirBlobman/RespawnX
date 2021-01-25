@@ -3,22 +3,22 @@
 
 [SIZE=5][COLOR=#FF0000][B]Features:[/B][/COLOR][/SIZE]
 [LIST]
-[*] Automatically respawn players.
-[*] Delay automatic respawns by a configurable amount.
-[*] Disable worlds that you don't want auto-respawns in.
-[*] Respawn players at the location that they died (or a radius near their death location).
-[*] Execute commands whenever a player respawns.
-[*] Fixes glitched players when they join (e.g. NaN or Infinite health).
+[*]Automatically respawn players.
+[*]Delay automatic respawns by a configurable amount.
+[*]Disable worlds that you don't want auto-respawns in.
+[*]Respawn players at the location that they died (or a radius near their death location).
+[*]Execute commands whenever a player respawns.
+[*]Fixes glitched players when they join (e.g. NaN or Infinite health).
 [/LIST]
 
 [SIZE=5][COLOR=#FF0000][B]Dependencies:[/B][/COLOR][/SIZE]
 [LIST]
-[*] [URL="https://www.spigotmc.org/resources/83189/"]SirBlobmanCore[/URL]
+[*][URL='https://www.spigotmc.org/resources/83189/']SirBlobmanCore[/URL]
 [/LIST]
 
 [SIZE=5][B][COLOR=#FF0000]Help and Support:[/COLOR][/B][/SIZE]
 Click the image to join my discord for support. You can also join if you have feature requests or if you just want to chat with other users.
-[URL="https://discord.gg/XMg2agT"][IMG]https://discordapp.com/assets/fc0b01fe10a0b8c602fb0106d8189d9b.png[/IMG][/URL]
+[URL='https://discord.gg/XMg2agT'][IMG]https://discordapp.com/assets/fc0b01fe10a0b8c602fb0106d8189d9b.png[/IMG][/URL]
 
 [SIZE=5][B][COLOR=#FF0000]Extra Information:[/COLOR][/B][/SIZE]
 Please do not use a review to leave bug reports or errors. I am not able to help you through a review.
