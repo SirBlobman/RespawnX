@@ -1,5 +1,6 @@
 # Mac OSX
 .DS_Store
+._*
 
 # Java
 *.class
@@ -18,6 +19,3 @@ bin/
 # Maven
 target/
 dependency-reduced-pom.xml
-
-# Other
-Backup/
