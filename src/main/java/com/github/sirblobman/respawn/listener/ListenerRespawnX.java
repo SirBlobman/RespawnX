@@ -29,9 +29,10 @@ import com.github.sirblobman.api.nms.PlayerHandler;
 import com.github.sirblobman.api.utility.Validate;
 import com.github.sirblobman.respawn.RespawnPlugin;
 
-public class ListenerRespawnX implements Listener {
+public final class ListenerRespawnX implements Listener {
     private final RespawnPlugin plugin;
     private final Map<UUID, Location> lastDeathLocationMap;
+
     public ListenerRespawnX(RespawnPlugin plugin) {
         this.plugin = Validate.notNull(plugin, "plugin must not be null!");
         this.lastDeathLocationMap = new HashMap<>();

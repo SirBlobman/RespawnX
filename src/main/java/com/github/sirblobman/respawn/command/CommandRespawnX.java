@@ -9,8 +9,9 @@ import com.github.sirblobman.api.command.Command;
 import com.github.sirblobman.api.utility.MessageUtility;
 import com.github.sirblobman.respawn.RespawnPlugin;
 
-public class CommandRespawnX extends Command {
+public final class CommandRespawnX extends Command {
     private final RespawnPlugin plugin;
+
     public CommandRespawnX(RespawnPlugin plugin) {
         super(plugin, "respawnx");
         this.plugin = plugin;
@@ -24,6 +25,7 @@ public class CommandRespawnX extends Command {
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if(args.length < 1) return false;
+
         String sub = args[0].toLowerCase();
         if(!sub.equals("reload")) return false;
 
