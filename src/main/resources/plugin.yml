@@ -5,6 +5,7 @@ website: "${project.url}"
 
 main: "${bukkit.plugin.main}"
 version: "${bukkit.plugin.version}"
+api-version: "1.13"
 load: POSTWORLD
 
 authors:

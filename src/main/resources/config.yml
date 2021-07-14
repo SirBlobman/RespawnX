@@ -1,19 +1,16 @@
 # This is the default configuration for RespawnX by SirBlobman
 # Made for version ${bukkit.plugin.version}
 
-# How long should RespawnX wait before automatically respawning players?
-# The delay is in ticks
-#
+# How many ticks should RespawnX wait before automatically respawning players?
+# 20 ticks is one second.
 # Default: 1
 delay: 1
 
 # Should a permission be required to automatically respawn a player?
-#
 # Default: false (no)
 require-permission: false
 
-# If 'require permission' is set to true, what permission is required?
-#
+# If 'require-permission' is set to true, what permission is required?
 # Default: "respawnx.respawn.automatic"
 permission: "respawnx.respawn.automatic"
 
@@ -22,10 +19,15 @@ permission: "respawnx.respawn.automatic"
 #
 # Default:
 # - "minigame1"
-# - "minigame2"
+# - "MiNiGaMe2"
 disabled-world-list:
   - "minigame1"
   - "MiNiGaMe2"
+
+# Set this to true if you want the 'disabled-world-list' to be
+# a list of enabled worlds instead.
+# Default: false
+disabled-world-list-inverted: false
 
 # Which commands should be executed when a player respawns?
 # Set it to [] to disable
@@ -37,12 +39,16 @@ respawn-commands:
 
 respawn-near-death:
   # Should players respawn near the location they died?
-  #
   # Default: false
   enabled: false
 
   # How close to their death location should they respawn?
   # The distance is a circular radius of blocks
-  #
   # Default: 1
   radius: 1
+
+  # Should players be teleported to the regular respawn location
+  # if the area around their death location is unsafe?
+  # Current unsafe locations are only detected by lava blocks.
+  # Default: true
+  prevent-unsafe-respawn: true

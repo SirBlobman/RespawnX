@@ -10,13 +10,14 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -24,17 +25,18 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import com.github.sirblobman.api.configuration.ConfigurationManager;
+import com.github.sirblobman.api.core.listener.PluginListener;
 import com.github.sirblobman.api.nms.MultiVersionHandler;
 import com.github.sirblobman.api.nms.PlayerHandler;
-import com.github.sirblobman.api.utility.Validate;
+import com.github.sirblobman.api.xseries.XBlock;
 import com.github.sirblobman.respawn.RespawnPlugin;
 
-public final class ListenerRespawnX implements Listener {
-    private final RespawnPlugin plugin;
+public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     private final Map<UUID, Location> lastDeathLocationMap;
 
     public ListenerRespawnX(RespawnPlugin plugin) {
-        this.plugin = Validate.notNull(plugin, "plugin must not be null!");
+        super(plugin);
         this.lastDeathLocationMap = new HashMap<>();
     }
 
@@ -59,9 +61,9 @@ public final class ListenerRespawnX implements Listener {
         fixRespawnLocation(player, e);
         player.setCanPickupItems(true);
 
-        Runnable task = () -> runRespawnCommands(player);
+        RespawnPlugin plugin = getPlugin();
         BukkitScheduler scheduler = Bukkit.getScheduler();
-        scheduler.scheduleSyncDelayedTask(plugin, task, 5L);
+        scheduler.scheduleSyncDelayedTask(plugin, () -> runRespawnCommands(player), 5L);
     }
 
     @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
@@ -70,54 +72,67 @@ public final class ListenerRespawnX implements Listener {
         fixHealth(player);
     }
 
+    private YamlConfiguration getConfiguration() {
+        RespawnPlugin plugin = getPlugin();
+        ConfigurationManager configurationManager = plugin.getConfigurationManager();
+        return configurationManager.get("config.yml");
+    }
+
     private boolean hasPermission(Player player) {
-        FileConfiguration configuration = this.plugin.getConfig();
+        YamlConfiguration configuration = getConfiguration();
         if(!configuration.getBoolean("require-permission")) return true;
 
         String permissionName = configuration.getString("permission");
         if(permissionName == null || permissionName.isEmpty()) return true;
 
-        Permission respawnPermission = new Permission(permissionName, "RespawnX Auto-Respawn Permission", PermissionDefault.FALSE);
+        Permission respawnPermission = new Permission(permissionName, "RespawnX Auto-Respawn Permission",
+                PermissionDefault.FALSE);
         return player.hasPermission(respawnPermission);
     }
 
-    private boolean checkWorld(Player player) {
-        FileConfiguration configuration = this.plugin.getConfig();
+    private boolean isWorldEnabled(Player player) {
+        YamlConfiguration configuration = getConfiguration();
         List<String> disabledWorldNameList = configuration.getStringList("disabled-world-list");
+        boolean inverted = configuration.getBoolean("disabled-world-list-inverted", false);
 
         World world = player.getWorld();
         String worldName = world.getName();
-        return !disabledWorldNameList.contains(worldName);
+        boolean contains = disabledWorldNameList.contains(worldName);
+
+        return (inverted == contains);
     }
 
     private boolean shouldNotRespawn(Player player) {
-        return (!hasPermission(player) || !checkWorld(player));
+        return (!hasPermission(player) || !isWorldEnabled(player));
     }
 
     private void autoRespawn(Player player) {
-        FileConfiguration configuration = this.plugin.getConfig();
+        YamlConfiguration configuration = getConfiguration();
         long delay = configuration.getLong("delay");
 
+        RespawnPlugin plugin = getPlugin();
         BukkitScheduler scheduler = Bukkit.getScheduler();
-        scheduler.runTaskLater(this.plugin, () -> respawn(player), delay);
+        scheduler.runTaskLater(plugin, () -> respawn(player), delay);
     }
 
     private void respawn(Player player) {
         if(!player.isDead()) return;
-        MultiVersionHandler multiVersionHandler = this.plugin.getMultiVersionHandler();
+
+        RespawnPlugin plugin = getPlugin();
+        MultiVersionHandler multiVersionHandler = plugin.getMultiVersionHandler();
         PlayerHandler playerHandler = multiVersionHandler.getPlayerHandler();
         playerHandler.forceRespawn(player);
     }
 
     private void fixHealth(Player player) {
         double health = player.getHealth();
-        if(Double.isNaN(health)) player.setHealth(0.0D);
-        if(Double.isInfinite(health)) player.setHealth(0.0D);
-        if(health < 0.0D) player.setHealth(0.0D);
+        if(Double.isNaN(health) || Double.isInfinite(health) || health < 0.0D) {
+            player.setHealth(0.0D);
+        }
     }
 
     private void fixRespawnLocation(Player player, PlayerRespawnEvent e) {
-        FileConfiguration configuration = this.plugin.getConfig();
+        YamlConfiguration configuration = getConfiguration();
         if(!configuration.getBoolean("respawn-near-death.enabled")) return;
 
         UUID uuid = player.getUniqueId();
@@ -134,13 +149,18 @@ public final class ListenerRespawnX implements Listener {
         World world = lastDeathLocation.getWorld();
 
         Location newLocation = new Location(world, newX, newY, newZ);
+        if(shouldPreventUnsafeRespawn() && isUnsafe(newLocation)) {
+            newLocation = world.getSpawnLocation();
+        }
+
         e.setRespawnLocation(newLocation);
         player.teleport(newLocation);
     }
 
     private void runRespawnCommands(Player player) {
-        FileConfiguration configuration = this.plugin.getConfig();
+        YamlConfiguration configuration = getConfiguration();
         List<String> commandList = configuration.getStringList("respawn-commands");
+        if(commandList.isEmpty()) return;
 
         String playerName = player.getName();
         for(String command : commandList) {
@@ -154,8 +174,30 @@ public final class ListenerRespawnX implements Listener {
             CommandSender console = Bukkit.getConsoleSender();
             Bukkit.dispatchCommand(console, command);
         } catch(Exception ex) {
-            Logger logger = this.plugin.getLogger();
-            logger.log(Level.WARNING, "An error occurred while running the '/" + command + "' command in console:", ex);
+            Logger logger = getPlugin().getLogger();
+            logger.log(Level.WARNING, "An error occurred while running the '/" + command
+                    + "' command in console:", ex);
         }
+    }
+
+    private boolean shouldPreventUnsafeRespawn() {
+        YamlConfiguration configuration = getConfiguration();
+        return configuration.getBoolean("respawn-near-death.prevent-unsafe-respawn", true);
+    }
+
+    private boolean isUnsafe(Location location) {
+        if(location == null) return true;
+
+        World world = location.getWorld();
+        if(world == null) return true;
+
+        int x = location.getBlockX(), locationY = location.getBlockY(), z = location.getBlockZ();
+        for(int y = locationY; y >= 0; y--) {
+            Block block = world.getBlockAt(x, y, z);
+            Material bukkitMaterial = block.getType();
+            if(XBlock.isLava(bukkitMaterial)) return true;
+        }
+
+        return false;
     }
 }
