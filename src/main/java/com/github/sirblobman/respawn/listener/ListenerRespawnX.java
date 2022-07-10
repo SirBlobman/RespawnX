@@ -26,9 +26,9 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import com.github.sirblobman.api.configuration.ConfigurationManager;
-import com.github.sirblobman.api.core.listener.PluginListener;
 import com.github.sirblobman.api.nms.MultiVersionHandler;
 import com.github.sirblobman.api.nms.PlayerHandler;
+import com.github.sirblobman.api.plugin.listener.PluginListener;
 import com.github.sirblobman.api.xseries.XBlock;
 import com.github.sirblobman.respawn.RespawnPlugin;
 
@@ -43,7 +43,9 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
     public void onDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
-        if(shouldNotRespawn(player)) return;
+        if(shouldNotRespawn(player)) {
+            return;
+        }
 
         UUID uuid = player.getUniqueId();
         Location lastDeathLocation = player.getLocation();
@@ -56,7 +58,9 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
     public void onRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
-        if(shouldNotRespawn(player)) return;
+        if(shouldNotRespawn(player)) {
+            return;
+        }
 
         fixRespawnLocation(player, e);
         player.setCanPickupItems(true);
@@ -80,10 +84,14 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
 
     private boolean hasPermission(Player player) {
         YamlConfiguration configuration = getConfiguration();
-        if(!configuration.getBoolean("require-permission")) return true;
+        if(!configuration.getBoolean("require-permission")) {
+            return true;
+        }
 
         String permissionName = configuration.getString("permission");
-        if(permissionName == null || permissionName.isEmpty()) return true;
+        if(permissionName == null || permissionName.isEmpty()) {
+            return true;
+        }
 
         Permission respawnPermission = new Permission(permissionName, "RespawnX Auto-Respawn Permission",
                 PermissionDefault.FALSE);
@@ -116,7 +124,9 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     }
 
     private void respawn(Player player) {
-        if(!player.isDead()) return;
+        if(!player.isDead()) {
+            return;
+        }
 
         RespawnPlugin plugin = getPlugin();
         MultiVersionHandler multiVersionHandler = plugin.getMultiVersionHandler();
@@ -133,12 +143,16 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
 
     private void fixRespawnLocation(Player player, PlayerRespawnEvent e) {
         YamlConfiguration configuration = getConfiguration();
-        if(!configuration.getBoolean("respawn-near-death.enabled")) return;
+        if(!configuration.getBoolean("respawn-near-death.enabled")) {
+            return;
+        }
 
         UUID uuid = player.getUniqueId();
-        if(!this.lastDeathLocationMap.containsKey(uuid)) return;
-        Location lastDeathLocation = this.lastDeathLocationMap.get(uuid);
+        if(!this.lastDeathLocationMap.containsKey(uuid)) {
+            return;
+        }
 
+        Location lastDeathLocation = this.lastDeathLocationMap.get(uuid);
         double radius = configuration.getDouble("respawn-near-death.radius");
         ThreadLocalRandom rng = ThreadLocalRandom.current();
         double randomValue = rng.nextDouble(-radius, radius);
@@ -160,7 +174,9 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     private void runRespawnCommands(Player player) {
         YamlConfiguration configuration = getConfiguration();
         List<String> commandList = configuration.getStringList("respawn-commands");
-        if(commandList.isEmpty()) return;
+        if(commandList.isEmpty()) {
+            return;
+        }
 
         String playerName = player.getName();
         for(String command : commandList) {
@@ -186,16 +202,22 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     }
 
     private boolean isUnsafe(Location location) {
-        if(location == null) return true;
+        if(location == null) {
+            return true;
+        }
 
         World world = location.getWorld();
-        if(world == null) return true;
+        if(world == null) {
+            return true;
+        }
 
         int x = location.getBlockX(), locationY = location.getBlockY(), z = location.getBlockZ();
         for(int y = locationY; y >= 0; y--) {
             Block block = world.getBlockAt(x, y, z);
             Material bukkitMaterial = block.getType();
-            if(XBlock.isLava(bukkitMaterial)) return true;
+            if(XBlock.isLava(bukkitMaterial)) {
+                return true;
+            }
         }
 
         return false;
