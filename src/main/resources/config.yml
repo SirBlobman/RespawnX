@@ -1,5 +1,5 @@
 # This is the default configuration for RespawnX by SirBlobman
-# Made for version ${bukkit.plugin.version}
+# Made for version ${pluginVersion}
 
 # How many ticks should RespawnX wait before automatically respawning players?
 # 20 ticks is one second.

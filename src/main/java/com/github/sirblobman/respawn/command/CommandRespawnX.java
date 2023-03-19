@@ -7,8 +7,10 @@ import java.util.Locale;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.github.sirblobman.api.adventure.adventure.text.Component;
+import com.github.sirblobman.api.adventure.adventure.text.format.NamedTextColor;
 import com.github.sirblobman.api.command.Command;
-import com.github.sirblobman.api.utility.MessageUtility;
+import com.github.sirblobman.api.language.LanguageManager;
 import com.github.sirblobman.respawn.RespawnPlugin;
 
 public final class CommandRespawnX extends Command {
@@ -39,8 +41,14 @@ public final class CommandRespawnX extends Command {
         JavaPlugin plugin = getPlugin();
         plugin.reloadConfig();
 
-        String message = MessageUtility.color("&2[RespawnX]&a Successfully reloaded the configuration file.");
-        sender.sendMessage(message);
+        LanguageManager languageManager = getLanguageManager();
+        if (languageManager != null) {
+            Component message = Component.text("[RespawnX] ", NamedTextColor.DARK_GREEN)
+                    .append(Component.text("Successfully reloaded the configuration file.",
+                            NamedTextColor.GREEN));
+            languageManager.sendMessage(sender, message);
+        }
+
         return true;
     }
 }
