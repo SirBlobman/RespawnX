@@ -6,9 +6,6 @@ val betaBoolean = betaString.toBoolean()
 val betaVersion = if (betaBoolean) "Beta-" else ""
 val calculatedVersion = "$baseVersion.$betaVersion$jenkinsBuildNumber"
 
-val privateMavenUsername = System.getenv("MAVEN_DEPLOY_USR") ?: property("mavenUsernameSirBlobman")
-val privateMavenPassword = System.getenv("MAVEN_DEPLOY_PSW") ?: property("mavenPasswordSirBlobman")
-
 plugins {
     id("java")
 }
