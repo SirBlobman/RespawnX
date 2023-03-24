@@ -29,7 +29,9 @@ import com.github.sirblobman.api.configuration.ConfigurationManager;
 import com.github.sirblobman.api.nms.MultiVersionHandler;
 import com.github.sirblobman.api.nms.PlayerHandler;
 import com.github.sirblobman.api.plugin.listener.PluginListener;
+import com.github.sirblobman.api.utility.VersionUtility;
 import com.github.sirblobman.api.xseries.XBlock;
+import com.github.sirblobman.respawn.utility.ModernUtility;
 import com.github.sirblobman.respawn.RespawnPlugin;
 
 public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
@@ -211,7 +213,13 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
             return true;
         }
 
-        int x = location.getBlockX(), locationY = location.getBlockY(), z = location.getBlockZ();
+        int locationY = location.getBlockY();
+        if (locationY < getMinHeight(world)) {
+            return true;
+        }
+
+        int x = location.getBlockX();
+        int z = location.getBlockZ();
         for(int y = locationY; y >= 0; y--) {
             Block block = world.getBlockAt(x, y, z);
             Material bukkitMaterial = block.getType();
@@ -221,5 +229,14 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         }
 
         return false;
+    }
+
+    private int getMinHeight(World world) {
+        int minorVersion = VersionUtility.getMinorVersion();
+        if (minorVersion < 18) {
+            return 0;
+        }
+
+        return ModernUtility.getMinWorldHeight(world);
     }
 }

@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 val baseVersion = findProperty("version.base") ?: "invalid"
 val betaString = ((findProperty("version.beta") ?: "false") as String)
 val jenkinsBuildNumber = System.getenv("BUILD_NUMBER") ?: "Unofficial"
@@ -8,6 +10,7 @@ val calculatedVersion = "$baseVersion.$betaVersion$jenkinsBuildNumber"
 
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
@@ -18,6 +21,9 @@ repositories {
 }
 
 dependencies {
+    // Local Dependencies
+    implementation(project(path = ":modern", configuration = "archives"))
+
     // Java Dependencies
     compileOnly("org.jetbrains:annotations:24.0.1") // JetBrains Annotations
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT") // Spigot API
@@ -27,12 +33,17 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 tasks {
     named<Jar>("jar") {
+        enabled = false
+    }
+
+    named<ShadowJar>("shadowJar") {
+        archiveClassifier.set(null as String?)
         archiveFileName.set("RespawnX-$calculatedVersion.jar")
     }
 
@@ -67,5 +78,9 @@ tasks {
                 "pluginVersion" to calculatedVersion
             ))
         }
+    }
+
+    build {
+        dependsOn("shadowJar")
     }
 }

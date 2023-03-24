@@ -3,10 +3,7 @@ package com.github.sirblobman.respawn;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.sirblobman.api.bstats.bukkit.Metrics;
-import com.github.sirblobman.api.bstats.charts.SimplePie;
 import com.github.sirblobman.api.core.CorePlugin;
-import com.github.sirblobman.api.language.Language;
-import com.github.sirblobman.api.language.LanguageManager;
 import com.github.sirblobman.api.plugin.ConfigurablePlugin;
 import com.github.sirblobman.api.update.UpdateManager;
 import com.github.sirblobman.respawn.command.CommandRespawnX;
@@ -21,9 +18,6 @@ public final class RespawnPlugin extends ConfigurablePlugin {
     @Override
     public void onEnable() {
         reloadConfig();
-
-        LanguageManager languageManager = getLanguageManager();
-        languageManager.onPluginEnable();
 
         registerCommands();
         registerListeners();
@@ -51,13 +45,6 @@ public final class RespawnPlugin extends ConfigurablePlugin {
     }
 
     private void register_bStats() {
-        Metrics metrics = new Metrics(this, 16217);
-        metrics.addCustomChart(new SimplePie("selected_language", this::getDefaultLanguageCode));
-    }
-
-    private String getDefaultLanguageCode() {
-        LanguageManager languageManager = getLanguageManager();
-        Language defaultLanguage = languageManager.getDefaultLanguage();
-        return (defaultLanguage == null ? "none" : defaultLanguage.getLanguageName());
+        new Metrics(this, 16217);
     }
 }
