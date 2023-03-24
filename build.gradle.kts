@@ -63,20 +63,24 @@ tasks {
         val pluginMainClass = (findProperty("bukkit.plugin.main") ?: "") as String
 
         filesMatching("plugin.yml") {
-            expand(mapOf(
-                "pluginName" to pluginName,
-                "pluginPrefix" to pluginPrefix,
-                "pluginDescription" to pluginDescription,
-                "pluginWebsite" to pluginWebsite,
-                "pluginMainClass" to pluginMainClass,
-                "pluginVersion" to calculatedVersion
-            ))
+            expand(
+                mapOf(
+                    "pluginName" to pluginName,
+                    "pluginPrefix" to pluginPrefix,
+                    "pluginDescription" to pluginDescription,
+                    "pluginWebsite" to pluginWebsite,
+                    "pluginMainClass" to pluginMainClass,
+                    "pluginVersion" to calculatedVersion
+                )
+            )
         }
 
         filesMatching("config.yml") {
-            expand(mapOf(
-                "pluginVersion" to calculatedVersion
-            ))
+            expand(
+                mapOf(
+                    "pluginVersion" to calculatedVersion
+                )
+            )
         }
     }
 

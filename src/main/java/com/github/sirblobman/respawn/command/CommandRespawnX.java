@@ -20,7 +20,7 @@ public final class CommandRespawnX extends Command {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, String[] args) {
-        if(args.length == 1) {
+        if (args.length == 1) {
             return Collections.singletonList("reload");
         }
 
@@ -29,12 +29,12 @@ public final class CommandRespawnX extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if(args.length < 1) {
+        if (args.length < 1) {
             return false;
         }
 
         String sub = args[0].toLowerCase(Locale.US);
-        if(!sub.equals("reload")) {
+        if (!sub.equals("reload")) {
             return false;
         }
 

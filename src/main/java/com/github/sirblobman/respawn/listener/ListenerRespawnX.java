@@ -31,8 +31,8 @@ import com.github.sirblobman.api.nms.PlayerHandler;
 import com.github.sirblobman.api.plugin.listener.PluginListener;
 import com.github.sirblobman.api.utility.VersionUtility;
 import com.github.sirblobman.api.xseries.XBlock;
-import com.github.sirblobman.respawn.utility.ModernUtility;
 import com.github.sirblobman.respawn.RespawnPlugin;
+import com.github.sirblobman.respawn.utility.ModernUtility;
 
 public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     private final Map<UUID, Location> lastDeathLocationMap;
@@ -42,10 +42,10 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         this.lastDeathLocationMap = new HashMap<>();
     }
 
-    @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent e) {
         Player player = e.getEntity();
-        if(shouldNotRespawn(player)) {
+        if (shouldNotRespawn(player)) {
             return;
         }
 
@@ -57,10 +57,10 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         autoRespawn(player);
     }
 
-    @EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onRespawn(PlayerRespawnEvent e) {
         Player player = e.getPlayer();
-        if(shouldNotRespawn(player)) {
+        if (shouldNotRespawn(player)) {
             return;
         }
 
@@ -72,7 +72,7 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         scheduler.scheduleSyncDelayedTask(plugin, () -> runRespawnCommands(player), 5L);
     }
 
-    @EventHandler(priority=EventPriority.MONITOR, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         fixHealth(player);
@@ -86,12 +86,12 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
 
     private boolean hasPermission(Player player) {
         YamlConfiguration configuration = getConfiguration();
-        if(!configuration.getBoolean("require-permission")) {
+        if (!configuration.getBoolean("require-permission")) {
             return true;
         }
 
         String permissionName = configuration.getString("permission");
-        if(permissionName == null || permissionName.isEmpty()) {
+        if (permissionName == null || permissionName.isEmpty()) {
             return true;
         }
 
@@ -126,7 +126,7 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     }
 
     private void respawn(Player player) {
-        if(!player.isDead()) {
+        if (!player.isDead()) {
             return;
         }
 
@@ -138,19 +138,19 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
 
     private void fixHealth(Player player) {
         double health = player.getHealth();
-        if(Double.isNaN(health) || Double.isInfinite(health) || health < 0.0D) {
+        if (Double.isNaN(health) || Double.isInfinite(health) || health < 0.0D) {
             player.setHealth(0.0D);
         }
     }
 
     private void fixRespawnLocation(Player player, PlayerRespawnEvent e) {
         YamlConfiguration configuration = getConfiguration();
-        if(!configuration.getBoolean("respawn-near-death.enabled")) {
+        if (!configuration.getBoolean("respawn-near-death.enabled")) {
             return;
         }
 
         UUID uuid = player.getUniqueId();
-        if(!this.lastDeathLocationMap.containsKey(uuid)) {
+        if (!this.lastDeathLocationMap.containsKey(uuid)) {
             return;
         }
 
@@ -165,7 +165,7 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         World world = lastDeathLocation.getWorld();
 
         Location newLocation = new Location(world, newX, newY, newZ);
-        if(shouldPreventUnsafeRespawn() && isUnsafe(newLocation)) {
+        if (shouldPreventUnsafeRespawn() && isUnsafe(newLocation)) {
             newLocation = world.getSpawnLocation();
         }
 
@@ -176,12 +176,12 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     private void runRespawnCommands(Player player) {
         YamlConfiguration configuration = getConfiguration();
         List<String> commandList = configuration.getStringList("respawn-commands");
-        if(commandList.isEmpty()) {
+        if (commandList.isEmpty()) {
             return;
         }
 
         String playerName = player.getName();
-        for(String command : commandList) {
+        for (String command : commandList) {
             String realCommand = command.replace("{player}", playerName);
             runAsConsole(realCommand);
         }
@@ -191,7 +191,7 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         try {
             CommandSender console = Bukkit.getConsoleSender();
             Bukkit.dispatchCommand(console, command);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             Logger logger = getPlugin().getLogger();
             logger.log(Level.WARNING, "An error occurred while running the '/" + command
                     + "' command in console:", ex);
@@ -204,12 +204,12 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     }
 
     private boolean isUnsafe(Location location) {
-        if(location == null) {
+        if (location == null) {
             return true;
         }
 
         World world = location.getWorld();
-        if(world == null) {
+        if (world == null) {
             return true;
         }
 
@@ -220,10 +220,10 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
 
         int x = location.getBlockX();
         int z = location.getBlockZ();
-        for(int y = locationY; y >= 0; y--) {
+        for (int y = locationY; y >= 0; y--) {
             Block block = world.getBlockAt(x, y, z);
             Material bukkitMaterial = block.getType();
-            if(XBlock.isLava(bukkitMaterial)) {
+            if (XBlock.isLava(bukkitMaterial)) {
                 return true;
             }
         }
