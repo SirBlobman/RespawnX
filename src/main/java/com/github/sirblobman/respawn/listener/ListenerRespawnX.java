@@ -118,7 +118,7 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
 
         RespawnTask task = new RespawnTask(plugin, player);
         task.setDelay(delay);
-        scheduler.scheduleEntityTask(task);
+        scheduler.scheduleTask(task);
     }
 
     private void fixHealth(Player player) {
