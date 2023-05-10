@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Logger;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -41,28 +42,37 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onDeath(PlayerDeathEvent e) {
+        printDebug("Detected PlayerDeathEvent...");
+
         Player player = e.getEntity();
         if (shouldNotRespawn(player)) {
+            printDebug("Player world is disabled or is missing permission.");
             return;
         }
 
-        UUID uuid = player.getUniqueId();
+        UUID playerId = player.getUniqueId();
         Location lastDeathLocation = player.getLocation();
-        this.lastDeathLocationMap.put(uuid, lastDeathLocation);
+        this.lastDeathLocationMap.put(playerId, lastDeathLocation);
 
+        printDebug("Disabled player item pickup.");
         player.setCanPickupItems(false);
         autoRespawn(player);
+        printDebug("Triggered automatic respawn for player.");
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onRespawn(PlayerRespawnEvent e) {
+        printDebug("Detected PlayerRespawnEvent.");
         Player player = e.getPlayer();
         if (shouldNotRespawn(player)) {
             return;
         }
 
         fixRespawnLocation(player, e);
+        printDebug("Fixed respawn location.");
+
         player.setCanPickupItems(true);
+        printDebug("Re-enabled player item pickup.");
 
         RespawnPlugin plugin = getPlugin();
         FoliaHelper foliaHelper = plugin.getFoliaHelper();
@@ -70,12 +80,15 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
 
         CommandsTask task = new CommandsTask(plugin, player);
         scheduler.scheduleEntityTask(task);
+        printDebug("Scheduled respawn commands task for player.");
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent e) {
+        printDebug("Detected PlayerJoinEvent...");
         Player player = e.getPlayer();
         fixHealth(player);
+        printDebug("Fixed player health.");
     }
 
     private @NotNull RespawnConfiguration getConfiguration() {
@@ -86,6 +99,16 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     private @NotNull RespawnNearDeathConfiguration getRespawnNearDeath() {
         RespawnConfiguration configuration = getConfiguration();
         return configuration.getRespawnNearDeath();
+    }
+
+    private void printDebug(@NotNull String message) {
+        RespawnConfiguration configuration = getConfiguration();
+        if (!configuration.isDebugMode()) {
+            return;
+        }
+
+        Logger logger = getLogger();
+        logger.info("[Debug] " + message);
     }
 
     private boolean hasPermission(@NotNull Player player) {
@@ -101,11 +124,25 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     private boolean isWorldDisabled(@NotNull Player player) {
         World world = player.getWorld();
         RespawnConfiguration configuration = getConfiguration();
-        return !configuration.isDisabled(world);
+        return configuration.isDisabled(world);
     }
 
-    private boolean shouldNotRespawn(Player player) {
-        return (isWorldDisabled(player) || !hasPermission(player));
+    private boolean shouldNotRespawn(@NotNull Player player) {
+        printDebug("Detected check for 'should not respawn player'.");
+        printDebug("Player: " + player.getName());
+
+        if (isWorldDisabled(player)) {
+            printDebug("World is disabled for player.");
+            return true;
+        }
+
+        if (!hasPermission(player)) {
+            printDebug("Player is missing automatic respawn permission.");
+            return true;
+        }
+
+        printDebug("Player should respawn.");
+        return false;
     }
 
     private void autoRespawn(@NotNull Player player) {
@@ -118,10 +155,10 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
 
         RespawnTask task = new RespawnTask(plugin, player);
         task.setDelay(delay);
-        scheduler.scheduleTask(task);
+        scheduler.scheduleEntityTask(task);
     }
 
-    private void fixHealth(Player player) {
+    private void fixHealth(@NotNull Player player) {
         double health = player.getHealth();
         if (Double.isNaN(health) || Double.isInfinite(health) || health < 0.0D) {
             player.setHealth(0.0D);

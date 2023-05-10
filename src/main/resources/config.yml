@@ -1,6 +1,9 @@
 # This is the default configuration for RespawnX by SirBlobman
 # Made for version ${pluginVersion}
 
+# Debug Mode. Should be false unless you are testing a bug.
+debug-mode: false
+
 # How many ticks should RespawnX wait before automatically respawning players?
 # 20 ticks is one second.
 # Default: 1

@@ -19,13 +19,17 @@ public final class RespawnConfiguration implements IConfigurable {
     private final List<String> disabledWorldList;
     private final List<String> respawnCommandList;
     private final RespawnNearDeathConfiguration respawnNearDeath;
+
+    private boolean debugMode;
     private long delay;
     private boolean requirePermission;
     private String permissionName;
     private boolean disabledWorldListInverted;
+
     private transient Permission permission;
 
     public RespawnConfiguration() {
+        this.debugMode = false;
         this.delay = 1L;
         this.requirePermission = false;
         this.permissionName = "respawnx.respawn.automatic";
@@ -39,6 +43,7 @@ public final class RespawnConfiguration implements IConfigurable {
 
     @Override
     public void load(@NotNull ConfigurationSection config) {
+        setDebugMode(config.getBoolean("debug-mode", false));
         setDelay(config.getLong("delay", 1L));
         setRequirePermission(config.getBoolean("require-permission", false));
         setPermissionName(config.getString("permission", "respawnx.respawn.automatic"));
@@ -127,5 +132,13 @@ public final class RespawnConfiguration implements IConfigurable {
 
     public @NotNull RespawnNearDeathConfiguration getRespawnNearDeath() {
         return this.respawnNearDeath;
+    }
+
+    public boolean isDebugMode() {
+        return this.debugMode;
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
     }
 }

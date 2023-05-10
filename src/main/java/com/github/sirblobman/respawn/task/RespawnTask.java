@@ -4,29 +4,25 @@ import org.jetbrains.annotations.NotNull;
 
 import org.bukkit.entity.Player;
 
-import com.github.sirblobman.api.folia.details.TaskDetails;
+import com.github.sirblobman.api.folia.details.EntityTaskDetails;
 import com.github.sirblobman.api.nms.MultiVersionHandler;
 import com.github.sirblobman.api.nms.PlayerHandler;
 import com.github.sirblobman.respawn.RespawnPlugin;
 
-public final class RespawnTask extends TaskDetails {
+public final class RespawnTask extends EntityTaskDetails<Player> {
     private final RespawnPlugin plugin;
-    private final Player player;
 
     public RespawnTask(@NotNull RespawnPlugin plugin, @NotNull Player player) {
-        super(plugin);
+        super(plugin, player);
         this.plugin = plugin;
-        this.player = player;
     }
 
     @Override
     public void run() {
-        Player player = getPlayer();
-        respawn(player);
-    }
-
-    private @NotNull Player getPlayer() {
-        return this.player;
+        Player player = getEntity();
+        if (player != null) {
+            respawn(player);
+        }
     }
 
     private @NotNull RespawnPlugin getRespawnPlugin() {
