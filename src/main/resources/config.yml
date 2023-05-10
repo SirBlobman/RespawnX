@@ -11,6 +11,7 @@ delay: 1
 require-permission: false
 
 # If 'require-permission' is set to true, what permission is required?
+# This permission is NOT given to OPs by default.
 # Default: "respawnx.respawn.automatic"
 permission: "respawnx.respawn.automatic"
 
@@ -44,8 +45,8 @@ respawn-near-death:
 
   # How close to their death location should they respawn?
   # The distance is a circular radius of blocks
-  # Default: 1
-  radius: 1
+  # Default: 1.0
+  radius: 1.0
 
   # Should players be teleported to the regular respawn location
   # if the area around their death location is unsafe?

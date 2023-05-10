@@ -8,6 +8,8 @@ version: "${pluginVersion}"
 api-version: "1.13"
 load: "POSTWORLD"
 
+folia-supported: true
+
 authors:
   - "SirBlobman"
 
@@ -24,3 +26,11 @@ commands:
       - "autorespawn"
       - "auto-respawn"
       - "rx"
+
+permissions:
+  respawnx.respawn.automatic:
+    description: "Default permission to allow a player to respawn automatically."
+    default: false
+  respawnx.reload:
+    description: "Gives access to the '/respawnx reload' command."
+    default: true

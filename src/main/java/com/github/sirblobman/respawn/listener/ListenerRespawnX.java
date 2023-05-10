@@ -1,20 +1,16 @@
 package com.github.sirblobman.respawn.listener;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,22 +18,23 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
-import org.bukkit.scheduler.BukkitScheduler;
 
-import com.github.sirblobman.api.configuration.ConfigurationManager;
-import com.github.sirblobman.api.nms.MultiVersionHandler;
-import com.github.sirblobman.api.nms.PlayerHandler;
+import com.github.sirblobman.api.folia.FoliaHelper;
+import com.github.sirblobman.api.folia.scheduler.TaskScheduler;
 import com.github.sirblobman.api.plugin.listener.PluginListener;
 import com.github.sirblobman.api.utility.VersionUtility;
-import com.github.sirblobman.api.xseries.XBlock;
 import com.github.sirblobman.respawn.RespawnPlugin;
+import com.github.sirblobman.respawn.configuration.RespawnConfiguration;
+import com.github.sirblobman.respawn.configuration.RespawnNearDeathConfiguration;
+import com.github.sirblobman.respawn.task.CommandsTask;
+import com.github.sirblobman.respawn.task.RespawnTask;
 import com.github.sirblobman.respawn.utility.ModernUtility;
+import com.github.sirblobman.api.shaded.xseries.XBlock;
 
 public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     private final Map<UUID, Location> lastDeathLocationMap;
 
-    public ListenerRespawnX(RespawnPlugin plugin) {
+    public ListenerRespawnX(@NotNull RespawnPlugin plugin) {
         super(plugin);
         this.lastDeathLocationMap = new HashMap<>();
     }
@@ -68,8 +65,11 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         player.setCanPickupItems(true);
 
         RespawnPlugin plugin = getPlugin();
-        BukkitScheduler scheduler = Bukkit.getScheduler();
-        scheduler.scheduleSyncDelayedTask(plugin, () -> runRespawnCommands(player), 5L);
+        FoliaHelper foliaHelper = plugin.getFoliaHelper();
+        TaskScheduler scheduler = foliaHelper.getScheduler();
+
+        CommandsTask task = new CommandsTask(plugin, player);
+        scheduler.scheduleEntityTask(task);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -78,62 +78,47 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         fixHealth(player);
     }
 
-    private YamlConfiguration getConfiguration() {
+    private @NotNull RespawnConfiguration getConfiguration() {
         RespawnPlugin plugin = getPlugin();
-        ConfigurationManager configurationManager = plugin.getConfigurationManager();
-        return configurationManager.get("config.yml");
+        return plugin.getConfiguration();
     }
 
-    private boolean hasPermission(Player player) {
-        YamlConfiguration configuration = getConfiguration();
-        if (!configuration.getBoolean("require-permission")) {
+    private @NotNull RespawnNearDeathConfiguration getRespawnNearDeath() {
+        RespawnConfiguration configuration = getConfiguration();
+        return configuration.getRespawnNearDeath();
+    }
+
+    private boolean hasPermission(@NotNull Player player) {
+        RespawnConfiguration configuration = getConfiguration();
+        Permission permission = configuration.getPermission();
+        if (permission == null) {
             return true;
         }
 
-        String permissionName = configuration.getString("permission");
-        if (permissionName == null || permissionName.isEmpty()) {
-            return true;
-        }
-
-        Permission respawnPermission = new Permission(permissionName, "RespawnX Auto-Respawn Permission",
-                PermissionDefault.FALSE);
-        return player.hasPermission(respawnPermission);
+        return player.hasPermission(permission);
     }
 
-    private boolean isWorldEnabled(Player player) {
-        YamlConfiguration configuration = getConfiguration();
-        List<String> disabledWorldNameList = configuration.getStringList("disabled-world-list");
-        boolean inverted = configuration.getBoolean("disabled-world-list-inverted", false);
-
+    private boolean isWorldDisabled(@NotNull Player player) {
         World world = player.getWorld();
-        String worldName = world.getName();
-        boolean contains = disabledWorldNameList.contains(worldName);
-
-        return (inverted == contains);
+        RespawnConfiguration configuration = getConfiguration();
+        return !configuration.isDisabled(world);
     }
 
     private boolean shouldNotRespawn(Player player) {
-        return (!hasPermission(player) || !isWorldEnabled(player));
+        return (isWorldDisabled(player) || !hasPermission(player));
     }
 
-    private void autoRespawn(Player player) {
-        YamlConfiguration configuration = getConfiguration();
-        long delay = configuration.getLong("delay");
-
+    private void autoRespawn(@NotNull Player player) {
         RespawnPlugin plugin = getPlugin();
-        BukkitScheduler scheduler = Bukkit.getScheduler();
-        scheduler.runTaskLater(plugin, () -> respawn(player), delay);
-    }
+        FoliaHelper foliaHelper = plugin.getFoliaHelper();
+        TaskScheduler scheduler = foliaHelper.getScheduler();
 
-    private void respawn(Player player) {
-        if (!player.isDead()) {
-            return;
-        }
+        RespawnConfiguration configuration = getConfiguration();
+        long delay = configuration.getDelay();
 
-        RespawnPlugin plugin = getPlugin();
-        MultiVersionHandler multiVersionHandler = plugin.getMultiVersionHandler();
-        PlayerHandler playerHandler = multiVersionHandler.getPlayerHandler();
-        playerHandler.forceRespawn(player);
+        RespawnTask task = new RespawnTask(plugin, player);
+        task.setDelay(delay);
+        scheduler.scheduleEntityTask(task);
     }
 
     private void fixHealth(Player player) {
@@ -143,19 +128,20 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         }
     }
 
-    private void fixRespawnLocation(Player player, PlayerRespawnEvent e) {
-        YamlConfiguration configuration = getConfiguration();
-        if (!configuration.getBoolean("respawn-near-death.enabled")) {
+    private void fixRespawnLocation(@NotNull Player player, @NotNull PlayerRespawnEvent e) {
+        RespawnNearDeathConfiguration respawnNearDeath = getRespawnNearDeath();
+        if (!respawnNearDeath.isEnabled()) {
             return;
         }
 
-        UUID uuid = player.getUniqueId();
-        if (!this.lastDeathLocationMap.containsKey(uuid)) {
+        UUID playerId = player.getUniqueId();
+        if (!this.lastDeathLocationMap.containsKey(playerId)) {
             return;
         }
 
-        Location lastDeathLocation = this.lastDeathLocationMap.get(uuid);
-        double radius = configuration.getDouble("respawn-near-death.radius");
+        Location lastDeathLocation = this.lastDeathLocationMap.get(playerId);
+        double radius = respawnNearDeath.getRadius();
+
         ThreadLocalRandom rng = ThreadLocalRandom.current();
         double randomValue = rng.nextDouble(-radius, radius);
 
@@ -165,7 +151,7 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         World world = lastDeathLocation.getWorld();
 
         Location newLocation = new Location(world, newX, newY, newZ);
-        if (shouldPreventUnsafeRespawn() && isUnsafe(newLocation)) {
+        if (respawnNearDeath.isPreventUnsafeRespawn() && isUnsafe(newLocation)) {
             newLocation = world.getSpawnLocation();
         }
 
@@ -173,41 +159,7 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         player.teleport(newLocation);
     }
 
-    private void runRespawnCommands(Player player) {
-        YamlConfiguration configuration = getConfiguration();
-        List<String> commandList = configuration.getStringList("respawn-commands");
-        if (commandList.isEmpty()) {
-            return;
-        }
-
-        String playerName = player.getName();
-        for (String command : commandList) {
-            String realCommand = command.replace("{player}", playerName);
-            runAsConsole(realCommand);
-        }
-    }
-
-    private void runAsConsole(String command) {
-        try {
-            CommandSender console = Bukkit.getConsoleSender();
-            Bukkit.dispatchCommand(console, command);
-        } catch (Exception ex) {
-            Logger logger = getPlugin().getLogger();
-            logger.log(Level.WARNING, "An error occurred while running the '/" + command
-                    + "' command in console:", ex);
-        }
-    }
-
-    private boolean shouldPreventUnsafeRespawn() {
-        YamlConfiguration configuration = getConfiguration();
-        return configuration.getBoolean("respawn-near-death.prevent-unsafe-respawn", true);
-    }
-
-    private boolean isUnsafe(Location location) {
-        if (location == null) {
-            return true;
-        }
-
+    private boolean isUnsafe(@NotNull Location location) {
         World world = location.getWorld();
         if (world == null) {
             return true;
@@ -231,7 +183,7 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         return false;
     }
 
-    private int getMinHeight(World world) {
+    private int getMinHeight(@NotNull World world) {
         int minorVersion = VersionUtility.getMinorVersion();
         if (minorVersion < 18) {
             return 0;
