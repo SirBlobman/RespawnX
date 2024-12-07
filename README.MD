@@ -11,5 +11,5 @@ An easy-to-use plugin that automatically respawns players.
 ## Requirements
 
 - Java 8
-- [Spigot](https://www.spigotmc.org/) or [Paper](https://papermc.io/downloads/paper) 1.8.8 - 1.19.4
+- [Spigot](https://www.spigotmc.org/) or [Paper](https://papermc.io/downloads/paper) 1.18.2 - 1.21.4
 - [BlueSlimeCore](https://www.spigotmc.org/resources/83189/)

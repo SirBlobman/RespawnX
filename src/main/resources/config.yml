@@ -46,13 +46,15 @@ respawn-near-death:
   # Default: false
   enabled: false
 
-  # How close to their death location should they respawn?
-  # The distance is a circular radius of blocks
-  # Default: 1.0
-  radius: 1.0
-
   # Should players be teleported to the regular respawn location
   # if the area around their death location is unsafe?
-  # Current unsafe locations are only detected by lava blocks.
+  # Current unsafe locations are only detected by lava blocks and void.
   # Default: true
   prevent-unsafe-respawn: true
+
+  # How close to their death location should they respawn?
+  # The distance is a radius of blocks
+  # Default: 5, 10, 5
+  radius-x: 5.0
+  radius-y: 10.0
+  radius-z: 5.0

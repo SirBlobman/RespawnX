@@ -23,13 +23,11 @@ import org.bukkit.permissions.Permission;
 import com.github.sirblobman.api.folia.FoliaHelper;
 import com.github.sirblobman.api.folia.scheduler.TaskScheduler;
 import com.github.sirblobman.api.plugin.listener.PluginListener;
-import com.github.sirblobman.api.utility.VersionUtility;
 import com.github.sirblobman.respawn.RespawnPlugin;
 import com.github.sirblobman.respawn.configuration.RespawnConfiguration;
 import com.github.sirblobman.respawn.configuration.RespawnNearDeathConfiguration;
 import com.github.sirblobman.respawn.task.CommandsTask;
 import com.github.sirblobman.respawn.task.RespawnTask;
-import com.github.sirblobman.respawn.utility.ModernUtility;
 import com.github.sirblobman.api.shaded.xseries.XBlock;
 
 public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
@@ -177,14 +175,18 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         }
 
         Location lastDeathLocation = this.lastDeathLocationMap.get(playerId);
-        double radius = respawnNearDeath.getRadius();
+        double radiusX = respawnNearDeath.getRadiusX();
+        double radiusY = respawnNearDeath.getRadiusY();
+        double radiusZ = respawnNearDeath.getRadiusZ();
 
         ThreadLocalRandom rng = ThreadLocalRandom.current();
-        double randomValue = rng.nextDouble(-radius, radius);
+        double randomValueX = rng.nextDouble(-radiusX, radiusX);
+        double randomValueY = rng.nextDouble(-radiusY, radiusY);
+        double randomValueZ = rng.nextDouble(-radiusZ, radiusZ);
 
-        double newX = (lastDeathLocation.getX() + randomValue);
-        double newY = lastDeathLocation.getY();
-        double newZ = (lastDeathLocation.getZ() + randomValue);
+        double newX = (lastDeathLocation.getX() + randomValueX);
+        double newY = (lastDeathLocation.getY() + randomValueY);
+        double newZ = (lastDeathLocation.getZ() + randomValueZ);
         World world = lastDeathLocation.getWorld();
 
         Location newLocation = new Location(world, newX, newY, newZ);
@@ -203,7 +205,7 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
         }
 
         int locationY = location.getBlockY();
-        if (locationY < getMinHeight(world)) {
+        if (locationY <= getMinHeight(world)) {
             return true;
         }
 
@@ -221,11 +223,6 @@ public final class ListenerRespawnX extends PluginListener<RespawnPlugin> {
     }
 
     private int getMinHeight(@NotNull World world) {
-        int minorVersion = VersionUtility.getMinorVersion();
-        if (minorVersion < 18) {
-            return 0;
-        }
-
-        return ModernUtility.getMinWorldHeight(world);
+        return world.getMinHeight();
     }
 }

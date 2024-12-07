@@ -43,20 +43,18 @@ repositories {
 }
 
 dependencies {
-    // Local Dependencies
-    implementation(project(path = ":modern", configuration = "archives"))
-
     // Java Dependencies
-    compileOnly("org.jetbrains:annotations:24.0.1") // JetBrains Annotations
-    compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT") // Spigot API
+    compileOnly("org.jetbrains:annotations:26.0.1") // JetBrains Annotations
+    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT") // Spigot API
 
     // Plugin Dependencies
     compileOnly("com.github.sirblobman.api:core:2.9-SNAPSHOT") // BlueSlimeCore
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 tasks {
